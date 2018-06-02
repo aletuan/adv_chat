@@ -1,26 +1,27 @@
 import React from 'react';
+import { createStore } from 'redux';
 
-function createStore(reducer, initialState) {
-  let state = initialState;
-  const listeners = [];
+// function createStore(reducer, initialState) {
+//   let state = initialState;
+//   const listeners = [];
 
-  const subscribe = (listener) => (
-    listeners.push(listener)
-  );
+//   const subscribe = (listener) => (
+//     listeners.push(listener)
+//   );
 
-  const getState = () => (state);
+//   const getState = () => (state);
 
-  const dispatch = (action) => {
-    state = reducer(state, action);
-    listeners.forEach(l => l());
-  };
+//   const dispatch = (action) => {
+//     state = reducer(state, action);
+//     listeners.forEach(l => l());
+//   };
 
-  return {
-    subscribe,
-    getState,
-    dispatch,
-  };
-}
+//   return {
+//     subscribe,
+//     getState,
+//     dispatch,
+//   };
+// }
 
 function reducer(state, action) {
   if (action.type === 'ADD_MESSAGE') {
