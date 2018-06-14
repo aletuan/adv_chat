@@ -197,30 +197,44 @@ class App extends React.Component {
   }
 }
 
+// convert this component into container component
 class ThreadTabs extends React.Component {
-  handleClick = (id) => {
-    store.dispatch({
-      type: 'OPEN_THREAD',
-      id: id,
-    });
-  };
+  // handleClick = (id) => {
+  //   store.dispatch({
+  //     type: 'OPEN_THREAD',
+  //     id: id,
+  //   });
+  // };
 
+  // render() {
+  //   const tabs = this.props.tabs.map((tab, index) => (
+  //     <div
+  //       key={index}
+  //       className={tab.active ? 'active item' : 'item'}
+  //       onClick={() => this.handleClick(tab.id)}
+  //     >
+  //       {tab.title}
+  //     </div>
+  //   ));
+  //   return (
+  //     <div className='ui top attached tabular menu'>
+  //       {tabs}
+  //     </div>
+  //   );
+  // }
   render() {
-    const tabs = this.props.tabs.map((tab, index) => (
-      <div
-        key={index}
-        className={tab.active ? 'active item' : 'item'}
-        onClick={() => this.handleClick(tab.id)}
-      >
-        {tab.title}
-      </div>
-    ));
     return (
-      <div className='ui top attached tabular menu'>
-        {tabs}
-      </div>
-    );
-  }
+      <Tabs 
+        tabs = {this.props.tabs}
+        onClick={(id) => (
+          store.dispatch({
+            type: 'OPEN_THREAD',
+            id: id,
+          })
+        )}
+      />
+    )
+  };
 }
 
 class MessageInput extends React.Component {
@@ -296,5 +310,24 @@ class Thread extends React.Component {
     );
   }
 }
+
+// create presentational component
+// it gets data from props (sent by container component)
+// and use callback function (by props) to send back event
+const Tabs = (props) => (
+  <div className='ui top attached tabular menu'>
+    {
+      props.tabs.map((tab, index) => (
+        <div
+          key={index}
+          className={tab.active ? 'active item' : 'item'}
+          onClick={() => props.onClick(tab.id)}
+        >
+        {tab.title}
+        </div>
+      ))
+    }
+  </div>
+);
 
 export default App;
