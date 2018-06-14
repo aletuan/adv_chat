@@ -168,17 +168,17 @@ function findThreadIndex(threads, action) {
 const store = createStore(reducer);
 
 class App extends React.Component {
-  componentDidMount() {
-    store.subscribe(() => this.forceUpdate());
-  }
+  // componentDidMount() {
+  //   store.subscribe(() => this.forceUpdate());
+  // }
 
   render() {
     // get data from store
     // push down information into small component by props
-    const state = store.getState();
-    const activeThreadId = state.activeThreadId;
-    const threads = state.threads;
-    const activeThread = threads.find((t) => t.id === activeThreadId);
+    // const state = store.getState();
+    // const activeThreadId = state.activeThreadId;
+    // const threads = state.threads;
+    // const activeThread = threads.find((t) => t.id === activeThreadId);
 
     // removed since ThreadTabs doesn't need information
     // const tabs = threads.map(t => (
@@ -192,7 +192,7 @@ class App extends React.Component {
     return (
       <div className='ui segment'>
         <ThreadTabs />
-        <ThreadDisplay thread={activeThread} />
+        <ThreadDisplay />
       </div>
     );
   }
