@@ -253,7 +253,26 @@ class ThreadTabs extends React.Component {
   };
 }
 
-class MessageInput extends React.Component {
+const MessageList = (props) => (
+  <div className='ui comments'>
+    {
+      props.messages.map((m, index) => (
+        <div
+          className='comment'
+          key={index}
+          onClick={() => props.onClick(m.id)}
+        >
+        <div className='text'>
+          {m.text}
+          <span className='metadata'>@{m.timestamp}</span>
+        </div>
+        </div>
+      ))
+    }
+  </div>
+);
+
+class TextFieldSubmit extends React.Component {
   state = {
     value: '',
   };
@@ -265,11 +284,14 @@ class MessageInput extends React.Component {
   };
 
   handleSubmit = () => {
-    store.dispatch({
-      type: 'ADD_MESSAGE',
-      text: this.state.value,
-      threadId: this.props.threadId,
-    });
+    // Since this is presentational component
+    // it is no longer communicate with store
+    this.props.onSubmit(this.state.value);
+    // store.dispatch({
+    //   type: 'ADD_MESSAGE',
+    //   text: this.state.value,
+    //   threadId: this.props.threadId,
+    // });
     this.setState({
       value: '',
     });
@@ -295,35 +317,57 @@ class MessageInput extends React.Component {
   }
 }
 
+const Thread = (props) => (
+  <div className='ui center aligned basic segment'>
+    <MessageList
+      messages={props.thread.messages}
+      onClick={props.onMessageClick}
+    />
+    <TextFieldSubmit
+      onSubmit={props.onMessageSubmit}
+    />
+  </div>
+);
+
 class ThreadDisplay extends React.Component {
-  handleClick = (id) => {
-    store.dispatch({
-      type: 'DELETE_MESSAGE',
-      id: id,
-    });
-  };
+  // this container now
+  // let it interact with store directly
+  componentDidMount() {
+    store.subscribe(() => this.forceUpdate());
+  }
+
+  // handleClick = (id) => {
+  //   store.dispatch({
+  //     type: 'DELETE_MESSAGE',
+  //     id: id,
+  //   });
+  // };
 
   render() {
-    const messages = this.props.thread.messages.map((message, index) => (
-      <div
-        className='comment'
-        key={index}
-        onClick={() => this.handleClick(message.id)}
-      >
-        <div className='text'>
-          {message.text}
-          <span className='metadata'>@{message.timestamp}</span>
-        </div>
-      </div>
-    ));
-    return (
-      <div className='ui center aligned basic segment'>
-        <div className='ui comments'>
-          {messages}
-        </div>
-        <MessageInput threadId={this.props.thread.id} />
-      </div>
+    const state = store.getState();
+    const activeThreadId = state.activeThreadId;
+    const activeThread = state.threads.find(
+      t => t.id === activeThreadId
     );
+
+    return (
+      <Thread
+        thread = {activeThread}
+        onMessageClick = {(id) => (
+          store.dispatch({
+            type: 'DELETE_MESSAGE',
+            id: id,
+          })
+        )}
+        onMessageSubmit = {(text) => (
+          store.dispatch({
+            type: 'ADD_MESSAGE',
+            text: text,
+            threadId: activeThreadId,
+          })
+        )}
+      />
+    )
   }
 }
 
