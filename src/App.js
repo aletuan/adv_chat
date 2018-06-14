@@ -28,9 +28,10 @@ function threadsReducer(state, action) {
     };
 
     // find thread to concat new message
-    const threadIndex = state.findIndex(
-      (t) => t.id = action.threadId
-    );
+    // const threadIndex = state.findIndex(
+    //   (t) => t.id = action.threadId
+    // );
+    const threadIndex = findThreadIndex(state, action);
 
     const oldThread = state[threadIndex];
     const newThread = {
@@ -81,6 +82,26 @@ function messagesReducer(state, action) {
     return state.concat(newMessage);
   } else {
     return state;
+  }
+}
+
+function findThreadIndex(threads, action) {
+  switch(action.type) {
+    // add message based on the thread id
+    case 'ADD_MESSAGE': {
+      return threads.findIndex(
+        (t) => t.id === action.threadId
+      );
+    }
+    // delete message based on the message id
+    // which is stored in action.id
+    case 'DELETE_MESSAGE': {
+      return threads.findIndex(
+        (t) => t.messages.find((m) => (
+          m.id === action.id
+        ))
+      );
+    }
   }
 }
 
