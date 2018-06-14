@@ -34,7 +34,8 @@ function threadsReducer(state, action) {
     const oldThread = state[threadIndex];
     const newThread = {
       ...oldThread,
-      messages: oldThread.messages.concat(newMessage),
+      // messages: oldThread.messages.concat(newMessage),
+      messages: messagesReducer(oldThread.messages, action),
     };
 
     return [
@@ -65,6 +66,19 @@ function threadsReducer(state, action) {
         threadIndex + 1, state.length
       ),
     ];
+  } else {
+    return state;
+  }
+}
+
+function messagesReducer(state, action) {
+  if (action.type === 'ADD_MESSAGE') {
+    const newMessage = {
+      text: action.text,
+      timestamp: Date.now(),
+      id: uuid.v4(),
+    };
+    return state.concat(newMessage);
   } else {
     return state;
   }
