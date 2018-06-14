@@ -1,5 +1,6 @@
 import React from 'react';
 import uuid from 'uuid';
+// using redux library
 import { createStore } from 'redux';
 
 function reducer(state, action) {
@@ -82,6 +83,22 @@ const initialState = {
       title: 'Michael Collins',
       messages: [],
     },
+    {
+      id: '3-ab23',
+      title: 'Tuan Anh Le',
+      messages: [
+        {
+          text: 'Demo',
+          timestamp: Date.now(),
+          id: uuid.v4(),
+        },
+        {
+          text: 'Demo 2',
+          timestamp: Date.now(),
+          id: uuid.v4(),
+        },
+      ],
+    }
   ],
 };
 
