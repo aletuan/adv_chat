@@ -2,6 +2,7 @@ import React from 'react';
 import uuid from 'uuid';
 // using redux library
 import { createStore, combineReducers } from 'redux';
+import { Provider, connect } from 'react-redux';
 
 // each part of reducer function manager a part of state transition
 // function reducer(state = {}, action) {
@@ -390,4 +391,12 @@ const Tabs = (props) => (
   </div>
 );
 
-export default App;
+// export default App;
+// let store to be availabe throught the app context
+const WrappedApp = () => (
+  <Provider store = {store}>
+    <App />
+  </Provider>
+);
+
+export default WrappedApp;
