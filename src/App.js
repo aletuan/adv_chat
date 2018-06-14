@@ -192,7 +192,7 @@ class App extends React.Component {
     return (
       <div className='ui segment'>
         <ThreadTabs />
-        <Thread thread={activeThread} />
+        <ThreadDisplay thread={activeThread} />
       </div>
     );
   }
@@ -295,7 +295,7 @@ class MessageInput extends React.Component {
   }
 }
 
-class Thread extends React.Component {
+class ThreadDisplay extends React.Component {
   handleClick = (id) => {
     store.dispatch({
       type: 'DELETE_MESSAGE',
