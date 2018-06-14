@@ -48,11 +48,13 @@ function threadsReducer(state, action) {
     
   } else if (action.type === 'DELETE_MESSAGE') {
     // find thread to remove the message
-    const threadIndex = state.findIndex(
-      (t) => t.messages.find((m) => (
-        m.id === action.id
-      ))
-    );
+    // const threadIndex = state.findIndex(
+    //   (t) => t.messages.find((m) => (
+    //     m.id === action.id
+    //   ))
+    // );
+    const threadIndex = findThreadIndex(state, action);
+
     const oldThread = state[threadIndex];
 
     const newThread = {
@@ -80,6 +82,8 @@ function messagesReducer(state, action) {
       id: uuid.v4(),
     };
     return state.concat(newMessage);
+  } else  if (action.type === 'DELETE_MESSAGE') {
+    return state.filter(m => m.id != action.id);
   } else {
     return state;
   }
