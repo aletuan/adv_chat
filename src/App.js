@@ -13,12 +13,15 @@ function reducer(state, action) {
     const threadIndex = state.threads.findIndex(
       (t) => t.id === action.threadId
     );
+    // create new thread with overwite message property
+    // spear operator for object
     const oldThread = state.threads[threadIndex];
     const newThread = {
       ...oldThread,
       messages: oldThread.messages.concat(newMessage),
     };
 
+    // combine spread object with slicing technique
     return {
       ...state,
       threads: [
@@ -110,6 +113,8 @@ class App extends React.Component {
   }
 
   render() {
+    // get data from store
+    // push down information into small component by props
     const state = store.getState();
     const activeThreadId = state.activeThreadId;
     const threads = state.threads;
