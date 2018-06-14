@@ -4,14 +4,14 @@ import uuid from 'uuid';
 import { createStore } from 'redux';
 
 // each part of reducer function manager a part of state transition
-function reducer(state, action) {
+function reducer(state = {}, action) {
   return {
     activeThreadId: activeThreadIdReducer(state.activeThreadId, action),
     threads: threadsReducer(state.threads, action),
   };
 }
 
-function activeThreadIdReducer(state, action) {
+function activeThreadIdReducer(state = '1-fca2', action) {
   if (action.type === 'OPEN_THREAD') {
     return action.id;
   } else {
@@ -19,7 +19,18 @@ function activeThreadIdReducer(state, action) {
   }
 }
 
-function threadsReducer(state, action) {
+function threadsReducer(state = [
+  {
+    id: '1-fca2',
+    title: 'Buzz Aldrin',
+    messages: messagesReducer(undefined, {}),
+  },
+  {
+    id: '2-be91',
+    title: 'Michael Collins',
+    messages: messagesReducer(undefined, {}),
+  },
+], action) {
   if (action.type === 'ADD_MESSAGE') {
     const newMessage = {
       text: action.text,
@@ -74,7 +85,7 @@ function threadsReducer(state, action) {
   }
 }
 
-function messagesReducer(state, action) {
+function messagesReducer(state = [], action) {
   if (action.type === 'ADD_MESSAGE') {
     const newMessage = {
       text: action.text,
@@ -109,45 +120,47 @@ function findThreadIndex(threads, action) {
   }
 }
 
-const initialState = {
-  activeThreadId: '1-fca2',
-  threads: [
-    {
-      id: '1-fca2',
-      title: 'Buzz Aldrin',
-      messages: [
-        {
-          text: 'Twelve minutes to ignition.',
-          timestamp: Date.now(),
-          id: uuid.v4(),
-        },
-      ],
-    },
-    {
-      id: '2-be91',
-      title: 'Michael Collins',
-      messages: [],
-    },
-    {
-      id: '3-ab23',
-      title: 'Tuan Anh Le',
-      messages: [
-        {
-          text: 'Demo',
-          timestamp: Date.now(),
-          id: uuid.v4(),
-        },
-        {
-          text: 'Demo 2',
-          timestamp: Date.now(),
-          id: uuid.v4(),
-        },
-      ],
-    }
-  ],
-};
+// const initialState = {
+//   activeThreadId: '1-fca2',
+//   threads: [
+//     {
+//       id: '1-fca2',
+//       title: 'Buzz Aldrin',
+//       messages: [
+//         {
+//           text: 'Twelve minutes to ignition.',
+//           timestamp: Date.now(),
+//           id: uuid.v4(),
+//         },
+//       ],
+//     },
+//     {
+//       id: '2-be91',
+//       title: 'Michael Collins',
+//       messages: [],
+//     },
+//     {
+//       id: '3-ab23',
+//       title: 'Tuan Anh Le',
+//       messages: [
+//         {
+//           text: 'Demo',
+//           timestamp: Date.now(),
+//           id: uuid.v4(),
+//         },
+//         {
+//           text: 'Demo 2',
+//           timestamp: Date.now(),
+//           id: uuid.v4(),
+//         },
+//       ],
+//     }
+//   ],
+// };
 
-const store = createStore(reducer, initialState);
+// let set initial state in the create store
+// const store = createStore(reducer, initialState);
+const store = createStore(reducer);
 
 class App extends React.Component {
   componentDidMount() {
