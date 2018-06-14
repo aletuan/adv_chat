@@ -272,48 +272,48 @@ const Thread = (props) => (
   </div>
 );
 
-class ThreadDisplay extends React.Component {
-  // this container now
-  // let it interact with store directly
-  componentDidMount() {
-    store.subscribe(() => this.forceUpdate());
+const mapStateToThreadProps = (state) => (
+  {
+    thread: state.threads.find(
+      t => t.id === state.activeThreadId
+    ),
   }
+);
 
-  // handleClick = (id) => {
-  //   store.dispatch({
-  //     type: 'DELETE_MESSAGE',
-  //     id: id,
-  //   });
-  // };
-
-  render() {
-    const state = store.getState();
-    const activeThreadId = state.activeThreadId;
-    const activeThread = state.threads.find(
-      t => t.id === activeThreadId
-    );
-
-    return (
-      <Thread
-        thread = {activeThread}
-        onMessageClick = {(id) => (
-          store.dispatch({
-            type: 'DELETE_MESSAGE',
-            id: id,
-          })
-        )}
-        onMessageSubmit = {(text) => (
-          store.dispatch({
-            type: 'ADD_MESSAGE',
-            text: text,
-            threadId: activeThreadId,
-          })
-        )}
-      />
-    )
+const mapDispatchToThreadProps = (dispatch) => (
+  {
+    onMessageClick: (id) => (
+      dispatch({
+        type: 'DELETE_MESSAGE',
+        id: id,
+      })
+    ),
+    // kind of expose the dispatch function to
+    // megering function
+    dispatch: dispatch,
   }
-}
+)
 
+const mergeThreadProps = (stateProps, dispatchProps) => (
+  {
+    ...stateProps,
+    ...dispatchProps,
+    onMessageSubmit: (text) => (
+      dispatchProps.dispatch({
+        type: 'ADD_MESSAGE',
+        text: text,
+        threadId: stateProps.thread.id,
+      })
+    ),
+  }
+);
+
+// now using connect to generate ThreadDisplay
+const ThreadDisplay = connect(
+  mapStateToThreadProps,
+  mapDispatchToThreadProps,
+  mergeThreadProps
+)(Thread);
 
 // export default App;
 // let store to be availabe throught the app context
