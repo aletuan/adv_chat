@@ -180,17 +180,18 @@ class App extends React.Component {
     const threads = state.threads;
     const activeThread = threads.find((t) => t.id === activeThreadId);
 
-    const tabs = threads.map(t => (
-      {
-        title: t.title,
-        active: t.id === activeThreadId,
-        id: t.id,
-      }
-    ));
+    // removed since ThreadTabs doesn't need information
+    // const tabs = threads.map(t => (
+    //   {
+    //     title: t.title,
+    //     active: t.id === activeThreadId,
+    //     id: t.id,
+    //   }
+    // ));
 
     return (
       <div className='ui segment'>
-        <ThreadTabs tabs={tabs} />
+        <ThreadTabs />
         <Thread thread={activeThread} />
       </div>
     );
@@ -199,6 +200,12 @@ class App extends React.Component {
 
 // convert this component into container component
 class ThreadTabs extends React.Component {
+  // let component interact directly with store
+  // both way (when changing state send by store)
+  // or reading state store
+  componentDidMount() {
+    store.subscribe(() => this.forceUpdate());
+  }
   // handleClick = (id) => {
   //   store.dispatch({
   //     type: 'OPEN_THREAD',
@@ -223,9 +230,18 @@ class ThreadTabs extends React.Component {
   //   );
   // }
   render() {
+    const state = store.getState();
+    const tabs = state.threads.map(t => (
+      {
+        title: t.title,
+        active: t.id === state.activeThreadId,
+        id: t.id,
+      }
+    ));
+
     return (
       <Tabs 
-        tabs = {this.props.tabs}
+        tabs = {tabs}
         onClick={(id) => (
           store.dispatch({
             type: 'OPEN_THREAD',
