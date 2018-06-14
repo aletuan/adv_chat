@@ -126,70 +126,12 @@ function findThreadIndex(threads, action) {
   }
 }
 
-// const initialState = {
-//   activeThreadId: '1-fca2',
-//   threads: [
-//     {
-//       id: '1-fca2',
-//       title: 'Buzz Aldrin',
-//       messages: [
-//         {
-//           text: 'Twelve minutes to ignition.',
-//           timestamp: Date.now(),
-//           id: uuid.v4(),
-//         },
-//       ],
-//     },
-//     {
-//       id: '2-be91',
-//       title: 'Michael Collins',
-//       messages: [],
-//     },
-//     {
-//       id: '3-ab23',
-//       title: 'Tuan Anh Le',
-//       messages: [
-//         {
-//           text: 'Demo',
-//           timestamp: Date.now(),
-//           id: uuid.v4(),
-//         },
-//         {
-//           text: 'Demo 2',
-//           timestamp: Date.now(),
-//           id: uuid.v4(),
-//         },
-//       ],
-//     }
-//   ],
-// };
-
 // let set initial state in the create store
 // const store = createStore(reducer, initialState);
 const store = createStore(reducer);
 
 class App extends React.Component {
-  // componentDidMount() {
-  //   store.subscribe(() => this.forceUpdate());
-  // }
-
   render() {
-    // get data from store
-    // push down information into small component by props
-    // const state = store.getState();
-    // const activeThreadId = state.activeThreadId;
-    // const threads = state.threads;
-    // const activeThread = threads.find((t) => t.id === activeThreadId);
-
-    // removed since ThreadTabs doesn't need information
-    // const tabs = threads.map(t => (
-    //   {
-    //     title: t.title,
-    //     active: t.id === activeThreadId,
-    //     id: t.id,
-    //   }
-    // ));
-
     return (
       <div className='ui segment'>
         <ThreadTabs />
@@ -199,60 +141,60 @@ class App extends React.Component {
   }
 }
 
-// convert this component into container component
-class ThreadTabs extends React.Component {
-  // let component interact directly with store
-  // both way (when changing state send by store)
-  // or reading state store
-  componentDidMount() {
-    store.subscribe(() => this.forceUpdate());
-  }
-  // handleClick = (id) => {
-  //   store.dispatch({
-  //     type: 'OPEN_THREAD',
-  //     id: id,
-  //   });
-  // };
+// used for connect function, then generate
+// container component (ThreadTabs)
+// mapping function for state
+const mapStateToTabsProps = (state) => {
+  const tabs = state.threads.map(t => (
+    {
+      title: t.title,
+      active: t.id === state.activeThreadId,
+      id: t.id,
+    }
+  ));
 
-  // render() {
-  //   const tabs = this.props.tabs.map((tab, index) => (
-  //     <div
-  //       key={index}
-  //       className={tab.active ? 'active item' : 'item'}
-  //       onClick={() => this.handleClick(tab.id)}
-  //     >
-  //       {tab.title}
-  //     </div>
-  //   ));
-  //   return (
-  //     <div className='ui top attached tabular menu'>
-  //       {tabs}
-  //     </div>
-  //   );
-  // }
-  render() {
-    const state = store.getState();
-    const tabs = state.threads.map(t => (
-      {
-        title: t.title,
-        active: t.id === state.activeThreadId,
-        id: t.id,
-      }
-    ));
-
-    return (
-      <Tabs 
-        tabs = {tabs}
-        onClick={(id) => (
-          store.dispatch({
-            type: 'OPEN_THREAD',
-            id: id,
-          })
-        )}
-      />
-    )
+  return {
+    tabs,
   };
 }
+
+// mapping function for event and handle function
+const mapDispatchToTabsProps = (dispatch) => (
+  {
+    onClick: (id) => (
+      dispatch({
+        type: 'OPEN_THREAD',
+        id: id,
+      })
+    ),
+  }
+);
+
+// create presentational component
+// it gets data from props (sent by container component)
+// and use callback function (by props) to send back event
+const Tabs = (props) => (
+  <div className='ui top attached tabular menu'>
+    {
+      props.tabs.map((tab, index) => (
+        <div
+          key={index}
+          className={tab.active ? 'active item' : 'item'}
+          onClick={() => props.onClick(tab.id)}
+        >
+        {tab.title}
+        </div>
+      ))
+    }
+  </div>
+);
+
+
+// use connect function to generate the container component
+const ThreadTabs = connect(
+  mapStateToTabsProps,
+  mapDispatchToTabsProps
+)(Tabs);
 
 const MessageList = (props) => (
   <div className='ui comments'>
@@ -372,24 +314,6 @@ class ThreadDisplay extends React.Component {
   }
 }
 
-// create presentational component
-// it gets data from props (sent by container component)
-// and use callback function (by props) to send back event
-const Tabs = (props) => (
-  <div className='ui top attached tabular menu'>
-    {
-      props.tabs.map((tab, index) => (
-        <div
-          key={index}
-          className={tab.active ? 'active item' : 'item'}
-          onClick={() => props.onClick(tab.id)}
-        >
-        {tab.title}
-        </div>
-      ))
-    }
-  </div>
-);
 
 // export default App;
 // let store to be availabe throught the app context
