@@ -27,6 +27,7 @@ function threadsReducer(state, action) {
       id: uuid.v4(),
     };
 
+    // find thread to concat new message
     const threadIndex = state.findIndex(
       (t) => t.id = action.threadId
     );
@@ -45,6 +46,7 @@ function threadsReducer(state, action) {
     ];
     
   } else if (action.type === 'DELETE_MESSAGE') {
+    // find thread to remove the message
     const threadIndex = state.findIndex(
       (t) => t.messages.find((m) => (
         m.id === action.id
@@ -54,9 +56,7 @@ function threadsReducer(state, action) {
 
     const newThread = {
       ...oldThread,
-      messages: oldThread.messages.filter((m) => (
-        m.id !== action.id
-      )),
+      messages: messagesReducer(oldThread.messages, action),
     };
 
     return [
